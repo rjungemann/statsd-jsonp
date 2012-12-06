@@ -1,0 +1,6 @@
+{
+  "statsdHost": "localhost",
+  "statsdPort": 8125,
+  "port": 8124
+}
+
