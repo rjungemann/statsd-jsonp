@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+
+    <title>Statsd JSONP Sample</title>
+  </head>
+
+  <body>
+    <h1>Statsd JSONP Sample</h1>
+
+    <p><a class="reporter" href="">Report</a></p>
+
+    <script src="/javascripts/jquery-1.7.2.js"></script>
+    <script src="/javascripts/coffee-script.js"></script>
+
+    <script type="text/coffeescript">
+      $.statsd = {
+        report: (options = {}) ->
+          options.endpoint   ?= 'http://localhost:8124/'
+          options.method     ?= 'increment'
+          options.stat       ?= 'bars'
+          options.value      ?= 1
+          options.samplerate ?= null
+
+          options.ajaxMethod ?= 'GET'
+          options.success    ?= (json) -> console.log 'success', json
+          options.error      ?= (e) -> console.log 'failure', e
+
+          endpoint   = options.endpoint
+          method     = options.method
+          stat       = options.stat
+          value      = options.value
+          samplerate = options.samplerate
+
+          ajaxMethod = options.ajaxMethod
+          success    = options.success
+          error      = options.error
+
+          url = "#{endpoint}?method=#{method}&stat=#{stat}&value=#{value}"
+          url += "&samplerate=#{samplerate}" if samplerate?
+
+          $.ajax
+            type: ajaxMethod
+            url: url
+            async: true
+            contentType: 'application/json'
+            dataType: 'jsonp'
+            success: success
+            error: error
+      }
+
+      $ ->
+        $('.reporter').click (e) ->
+          e.preventDefault()
+
+          $.statsd.report()
+
+    </script>
+  </body>
+</html>
+
